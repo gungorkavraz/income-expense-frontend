@@ -1,7 +1,4 @@
-import axios from 'axios';
-
-axios.defaults.headers.common['Authorization'] =
-  'Bearer ' + localStorage.getItem('accessToken');
+import axios from 'utils/preparedAxios';
 
 interface RegisterUserInformation {
   name: string;

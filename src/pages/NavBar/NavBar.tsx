@@ -52,6 +52,13 @@ export default function WithSubnavigation() {
     (state: RootState) => state.userOperations
   );
 
+  const categories: any = useReduxSelector(
+    (state: RootState) => state.categories
+  );
+
+  console.log('categories');
+  console.log(categories);
+
   useEffect(() => {
     if (user.authenticatedUser !== null) {
     } else {
