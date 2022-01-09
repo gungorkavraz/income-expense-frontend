@@ -14,6 +14,13 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  Center,
+  Avatar,
 } from '@chakra-ui/react';
 import {
   HamburgerIcon,
@@ -46,12 +53,16 @@ export default function WithSubnavigation() {
   );
 
   useEffect(() => {
-    if (user.authenticatedUser.length > 0) {
-      console.log('kullanıcı var');
+    if (user.authenticatedUser !== null) {
     } else {
       dispatch(getAuthenticatedUserAsync());
     }
   }, [dispatch]);
+
+  const logout = () => {
+    localStorage.removeItem('accessToken');
+    window.location.reload();
+  };
 
   return (
     <Box>
@@ -93,37 +104,71 @@ export default function WithSubnavigation() {
             <DesktopNav />
           </Flex>
         </Flex>
-
-        <Stack
-          flex={{ base: 1, md: 0 }}
-          justify={'flex-end'}
-          direction={'row'}
-          spacing={6}
-        >
-          <Button
-            as={RouterLink}
-            to={routes.signIn}
-            fontSize={'sm'}
-            fontWeight={400}
-            variant={'link'}
+        {localStorage.getItem('accessToken') !== null ? (
+          <Menu>
+            <MenuButton
+              as={Button}
+              rounded={'full'}
+              variant={'link'}
+              cursor={'pointer'}
+              minW={0}
+            >
+              <Avatar
+                size={'sm'}
+                src={'https://avatars.dicebear.com/api/male/username.svg'}
+              />
+            </MenuButton>
+            <MenuList alignItems={'center'}>
+              <br />
+              <Center>
+                <Avatar
+                  size={'2xl'}
+                  src={'https://avatars.dicebear.com/api/male/username.svg'}
+                />
+              </Center>
+              <br />
+              <Center>
+                <p>{user.authenticatedUser.name}</p>
+              </Center>
+              <br />
+              <MenuDivider />
+              <MenuItem>Your Servers</MenuItem>
+              <MenuItem>Account Settings</MenuItem>
+              <MenuItem onClick={() => logout()}>Çıkış Yap</MenuItem>
+            </MenuList>
+          </Menu>
+        ) : (
+          <Stack
+            flex={{ base: 1, md: 0 }}
+            justify={'flex-end'}
+            direction={'row'}
+            spacing={6}
           >
-            Giriş Yap
-          </Button>
-          <Button
-            as={RouterLink}
-            to={routes.signUp}
-            display={{ base: 'none', md: 'inline-flex' }}
-            fontSize={'sm'}
-            fontWeight={600}
-            color={'white'}
-            bg={'blue.400'}
-            _hover={{
-              bg: 'blue.300',
-            }}
-          >
-            Kayıt Ol
-          </Button>
-        </Stack>
+            <Button
+              as={RouterLink}
+              to={routes.signIn}
+              fontSize={'sm'}
+              fontWeight={400}
+              variant={'link'}
+            >
+              Giriş Yap
+            </Button>
+            <Button
+              as={RouterLink}
+              to={routes.signUp}
+              display={{ base: 'none', md: 'inline-flex' }}
+              fontSize={'sm'}
+              fontWeight={600}
+              color={'white'}
+              bg={'blue.400'}
+              _hover={{
+                bg: 'blue.300',
+              }}
+            >
+              Kayıt Ol
+            </Button>
+          </Stack>
+        )}
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>

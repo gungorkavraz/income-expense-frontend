@@ -54,7 +54,9 @@ export const loginUserAsync = createAsyncThunk(
         Token: data.token,
       };
     } else {
-      console.log('successfalse');
+      return {
+        Success: false,
+      };
     }
   }
 );
@@ -87,12 +89,12 @@ const userOperationSlice = createSlice({
     builder.addCase(registerUserAsync.fulfilled, (state, action) => {});
     builder.addCase(loginUserAsync.fulfilled, (state, action) => {
       localStorage.setItem('accessToken', action.payload?.Token);
-      state.authenticatedUser = action.payload?.User;
+      if (action.payload.Success)
+        state.authenticatedUser = action.payload?.User;
     });
     builder.addCase(getAuthenticatedUserAsync.fulfilled, (state, action) => {
-      console.log('getAuthenticatedUserFulfilled');
-      console.log(action.payload);
-      state.authenticatedUser = action.payload?.User;
+      if (action.payload.Success)
+        state.authenticatedUser = action.payload?.User;
     });
   },
 });
