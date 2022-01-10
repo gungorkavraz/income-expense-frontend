@@ -1,8 +1,6 @@
 import { Box, Text } from '@chakra-ui/react';
 import routes from 'helper/routes';
-import AddCategory from 'pages/CategoryOperations/AddCategory';
-import SignIn from 'pages/UserOperations/SignIn';
-import SignUp from 'pages/UserOperations/SignUp';
+
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -12,10 +10,15 @@ import {
   Switch,
 } from 'react-router-dom';
 
-import NavBar from '../src/pages/NavBar/NavBar.tsx';
 import { PrivateRoute } from 'pages/PrivateRoute';
-import PageNotFound from 'pages/PageNotFound';
 import { getAuthenticatedUserAsync } from 'redux/Slices/userOperationSlice';
+
+import PageNotFound from 'pages/PageNotFound';
+import SignIn from 'pages/UserOperations/SignIn';
+import SignUp from 'pages/UserOperations/SignUp';
+import NavBar from '../src/pages/NavBar/NavBar.tsx';
+import AddCategory from 'pages/CategoryOperations/AddCategory';
+import AddTransaction from 'pages/TransactionOperations/AddTransaction';
 
 function App() {
   const dispatch = useDispatch();
@@ -26,7 +29,6 @@ function App() {
     if (user.length === 0) dispatch(getAuthenticatedUserAsync());
   }, [user]);
 
-  console.log('rendered');
   return (
     <Router>
       <Box className='App'>
@@ -38,6 +40,11 @@ function App() {
                 exact
                 path={routes.addCategory}
                 element={<PrivateRoute component={AddCategory} />}
+              />
+              <Route
+                exact
+                path={routes.addTransaction}
+                element={<PrivateRoute component={AddTransaction} />}
               />
               <Route path={'*'} element={<PageNotFound />}></Route>
             </Routes>
