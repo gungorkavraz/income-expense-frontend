@@ -5,7 +5,7 @@ const categoryService = new CategoryService();
 
 interface categoryValues {
   CategoryInformation: {
-    category_name: string;
+    name: string;
     is_income: boolean;
   };
 }
@@ -22,7 +22,7 @@ export const addCategoryAsync = createAsyncThunk(
       return {
         Success: true,
         Category: data.category,
-        Message: data.Message,
+        Message: data.message,
       };
     } else {
       return {

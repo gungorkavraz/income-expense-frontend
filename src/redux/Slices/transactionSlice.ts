@@ -14,9 +14,9 @@ interface TransactionInformation {
 }
 
 export const addTransactionAsync = createAsyncThunk(
-  'categories/addCategoryAsync',
+  'categories/addTransactionAsync',
   async (payload: TransactionInformation) => {
-    const response = await transactionService.addIncomeOrExpense(
+    const response = await transactionService.addTransaction(
       payload.TransactionInformation
     );
     const data = await response.data;
@@ -25,7 +25,7 @@ export const addTransactionAsync = createAsyncThunk(
       return {
         Success: true,
         IncomeOrExpense: data.transaction,
-        Message: data.Message,
+        Message: data.message,
       };
     } else {
       return {
@@ -37,15 +37,15 @@ export const addTransactionAsync = createAsyncThunk(
   }
 );
 
-export const getTransactionAsync = createAsyncThunk(
-  'categories/getCategoriesAsync',
+export const getTransactionsAsync = createAsyncThunk(
+  'categories/getTransactionsAsync',
   async () => {
-    const response = await transactionService.getIncomesOrExpenses();
+    const response = await transactionService.getTransactions();
     const data = response.data;
     if (data.success) {
       return {
         Success: data.success,
-        IncomesOrExpenses: data.transactions,
+        Transactions: data.transactions,
       };
     } else {
       return {
@@ -55,18 +55,18 @@ export const getTransactionAsync = createAsyncThunk(
   }
 );
 
-const incomeOrExpenseSlice = createSlice({
-  name: 'incomeOrExpenses',
+const transactionSlice = createSlice({
+  name: 'transactions',
   initialState: Array,
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(addTransactionAsync.fulfilled, (state, action) => {
       state.push(action.payload);
     });
-    // builder.addCase(getTransactionsAsync.fulfilled, (state, action) => {
-    //   return action.payload.IncomesOrExpenses;
-    // });
+    builder.addCase(getTransactionsAsync.fulfilled, (state, action) => {
+      return action.payload.Transactions;
+    });
   },
 });
 
-export default incomeOrExpenseSlice.reducer;
+export default transactionSlice.reducer;

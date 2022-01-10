@@ -1,7 +1,7 @@
 import axios from 'utils/preparedAxios';
 
 interface CategoryInformation {
-  category_name: string;
+  name: string;
   is_income: boolean;
 }
 

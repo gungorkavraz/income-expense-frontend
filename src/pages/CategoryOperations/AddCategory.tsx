@@ -22,7 +22,7 @@ import { addCategoryAsync } from 'redux/Slices/categorySlice';
 export default function AddCategory() {
   const dispatch = useAppDispatch();
   interface categoryInitialValues {
-    category_name: string;
+    name: string;
     category_type: string;
   }
 
@@ -32,14 +32,13 @@ export default function AddCategory() {
   };
 
   const initialValues = {
-    category_name: '',
+    name: '',
     category_type: '',
   };
 
   const addCategory = async (values: categoryInitialValues) => {
-    console.log(values);
     const categoryInformation = {
-      category_name: values.category_name,
+      name: values.name,
       is_income: false,
     };
     if (values.category_type === categoryTypes.INCOME) {
@@ -48,7 +47,15 @@ export default function AddCategory() {
       categoryInformation.is_income = false;
     }
 
-    dispatch(addCategoryAsync({ CategoryInformation: categoryInformation }));
+    const response: any = await dispatch(
+      addCategoryAsync({ CategoryInformation: categoryInformation })
+    );
+
+    if (response.payload.Success) {
+      successNotify(response.payload.Message);
+    } else {
+      errorNotify(response.payload.Message);
+    }
   };
 
   return (
@@ -63,12 +70,12 @@ export default function AddCategory() {
                 </Heading>
                 <Stack direction={{ base: 'column', md: 'row' }}>
                   <VStack w={'full'}>
-                    <FormControl id='category_name'>
+                    <FormControl id='name'>
                       <FormLabel>Kategori Adı</FormLabel>
                       <Input
                         required
                         onChange={props.handleChange}
-                        name='category_name'
+                        name='name'
                         type='text'
                       />
                     </FormControl>

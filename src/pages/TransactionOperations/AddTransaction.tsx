@@ -21,7 +21,7 @@ import { useEffect } from 'react';
 import { getCategoriesAsync } from 'redux/Slices/categorySlice';
 import {
   addTransactionAsync,
-  getTransactionAsync,
+  getTransactionsAsync,
 } from 'redux/Slices/transactionSlice';
 
 export default function AddTransaction() {
@@ -35,9 +35,6 @@ export default function AddTransaction() {
       dispatch(getCategoriesAsync());
     }
   }, [dispatch]);
-
-  console.log('categories');
-  console.log(categories);
 
   interface transactionInitialValues {
     category_id: number;
@@ -55,11 +52,18 @@ export default function AddTransaction() {
     description: '',
   };
 
-  const addTransaction = (values: transactionInitialValues) => {
+  const addTransaction = async (values: transactionInitialValues) => {
     console.log(values);
 
-    dispatch(addTransactionAsync({ TransactionInformation: values }));
-    // dispatch(getTransactionAsync());
+    const response: any = await dispatch(
+      addTransactionAsync({ TransactionInformation: values })
+    );
+    console.log(response);
+    if (response.payload.Success) {
+      successNotify(response.payload.Message);
+    } else {
+      errorNotify(response.payload.Message);
+    }
   };
 
   return (
@@ -83,17 +87,13 @@ export default function AddTransaction() {
                         type='text'
                         placeholder='Gelir/Gider Kategorisi Seçiniz'
                       >
-                        {categories.map((category: any) =>
-                          category !== undefined ? (
-                            <option key={category?.id} value={category?.id}>
-                              {category?.name}
-                              {' - '}
-                              {category?.is_income ? 'Gelir' : 'Gider'}
-                            </option>
-                          ) : (
-                            ''
-                          )
-                        )}
+                        {categories.map((category: any) => (
+                          <option key={category?.id} value={category?.id}>
+                            {category?.name}
+                            {' - '}
+                            {category?.is_income ? 'Gelir' : 'Gider'}
+                          </option>
+                        ))}
                       </Select>
                     </FormControl>
                     <FormControl id='process_date'>
@@ -117,16 +117,16 @@ export default function AddTransaction() {
                       />
                     </FormControl>
                     <FormControl id='currency'>
-                      <FormLabel>İşlem Tarihi</FormLabel>
+                      <FormLabel>Para Birimi</FormLabel>
                       <Select
                         required
                         onChange={props.handleChange}
                         name='currency'
                         placeholder='Gelir/Gider Para Birimi Seçiniz'
                       >
-                        <option value={'TL'}>TL</option>
-                        <option value={'USD'}>EUR</option>
-                        <option value={'EUR'}>USD</option>
+                        <option value={'TRY'}>TRY</option>
+                        <option value={'EUR'}>EUR</option>
+                        <option value={'USD'}>USD</option>
                       </Select>
                     </FormControl>
                   </HStack>

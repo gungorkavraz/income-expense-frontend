@@ -9,7 +9,7 @@ interface transactionValues {
 }
 
 export default class transactionService {
-  addIncomeOrExpense(transactionInformation: transactionValues) {
+  addTransaction(transactionInformation: transactionValues) {
     return axios
       .post(
         `${process.env.REACT_APP_API_TRANSACTION_URI}`,
@@ -23,7 +23,7 @@ export default class transactionService {
       });
   }
 
-  getIncomesOrExpenses() {
+  getTransactions() {
     return axios
       .get(`${process.env.REACT_APP_API_TRANSACTION_URI}`)
       .then((response) => {
