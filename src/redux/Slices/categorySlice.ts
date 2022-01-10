@@ -5,8 +5,8 @@ const categoryService = new CategoryService();
 
 interface categoryValues {
   CategoryInformation: {
-    categoryName: string;
-    isIncome: boolean;
+    category_name: string;
+    is_income: boolean;
   };
 }
 
@@ -34,14 +34,34 @@ export const addCategoryAsync = createAsyncThunk(
   }
 );
 
+export const getCategoriesAsync = createAsyncThunk(
+  'categories/getCategoriesAsync',
+  async () => {
+    const response = await categoryService.getCategories();
+    const data = response.data;
+    if (data.success) {
+      return {
+        Success: data.success,
+        Categories: data.categories,
+      };
+    } else {
+      return {
+        Success: data.success,
+      };
+    }
+  }
+);
+
 const categorySlice = createSlice({
   name: 'categories',
   initialState: Array,
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(addCategoryAsync.fulfilled, (state, action) => {
-      console.log('category add fullfilled');
       state.push(action.payload.Category);
+    });
+    builder.addCase(getCategoriesAsync.fulfilled, (state, action) => {
+      return action.payload.Categories;
     });
   },
 });

@@ -14,37 +14,38 @@ import {
   VStack,
 } from '@chakra-ui/react';
 
+import { useAppDispatch } from 'redux/hooks';
 import { successNotify, errorNotify } from '../Notify';
 import { ToastContainer, Zoom } from 'react-toastify';
-import { useDispatch } from 'react-redux';
 import { addCategoryAsync } from 'redux/Slices/categorySlice';
 
 export default function AddCategory() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   interface categoryInitialValues {
-    categoryName: string;
-    categoryType: string;
+    category_name: string;
+    category_type: string;
   }
 
   const categoryTypes = {
     INCOME: 'Income',
     EXPENSE: 'Expense',
   };
+
   const initialValues = {
-    categoryName: '',
-    categoryType: '',
+    category_name: '',
+    category_type: '',
   };
 
   const addCategory = async (values: categoryInitialValues) => {
     console.log(values);
     const categoryInformation = {
-      categoryName: values.categoryName,
-      isIncome: false,
+      category_name: values.category_name,
+      is_income: false,
     };
-    if (values.categoryType === categoryTypes.INCOME) {
-      categoryInformation.isIncome = true;
+    if (values.category_type === categoryTypes.INCOME) {
+      categoryInformation.is_income = true;
     } else {
-      categoryInformation.isIncome = false;
+      categoryInformation.is_income = false;
     }
 
     dispatch(addCategoryAsync({ CategoryInformation: categoryInformation }));
@@ -62,21 +63,21 @@ export default function AddCategory() {
                 </Heading>
                 <Stack direction={{ base: 'column', md: 'row' }}>
                   <VStack w={'full'}>
-                    <FormControl id='categoryName'>
+                    <FormControl id='category_name'>
                       <FormLabel>Kategori Adı</FormLabel>
                       <Input
                         required
                         onChange={props.handleChange}
-                        name='categoryName'
+                        name='category_name'
                         type='text'
                       />
                     </FormControl>
-                    <FormControl id='categoryType'>
+                    <FormControl id='category_type'>
                       <FormLabel>Kategori Türü</FormLabel>
                       <Select
                         required
                         onChange={props.handleChange}
-                        name='categoryType'
+                        name='category_type'
                         type='text'
                         placeholder='Kategori Türünü Seçiniz'
                       >

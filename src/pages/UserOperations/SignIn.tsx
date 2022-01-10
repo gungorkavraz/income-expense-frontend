@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppSelector, useAppDispatch } from 'redux/hooks';
 import { useNavigate } from 'react-router';
 import {
   Button,
@@ -22,7 +22,7 @@ import { ToastContainer, Zoom } from 'react-toastify';
 import { loginUserAsync } from 'redux/Slices/userOperationSlice';
 
 export default function SignIn() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
 
