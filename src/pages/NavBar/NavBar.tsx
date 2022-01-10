@@ -30,37 +30,24 @@ import {
 } from '@chakra-ui/icons';
 import { Link as RouterLink } from 'react-router-dom';
 
+import { useAppSelector, useAppDispatch } from 'redux/hooks';
+
 import { NAV_ITEMS, NavItem } from './NavBarDeclarations';
 import routes from 'helper/routes';
 
-import { useDispatch, useSelector as useReduxSelector } from 'react-redux';
-import store from '../../redux/store';
-import { isConstructorDeclaration } from 'typescript';
 import { useEffect } from 'react';
 import { getAuthenticatedUserAsync } from 'redux/Slices/userOperationSlice';
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-export type AppDispatch = typeof store.dispatch;
-
 export default function WithSubnavigation() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { isOpen, onToggle } = useDisclosure();
 
-  const user: any = useReduxSelector(
-    (state: RootState) => state.userOperations
+  const authenticatedUser: any = useAppSelector(
+    (state) => state.userOperations.authenticatedUser
   );
-
-  const categories: any = useReduxSelector(
-    (state: RootState) => state.categories
-  );
-
-  console.log('categories');
-  console.log(categories);
 
   useEffect(() => {
-    if (user.authenticatedUser !== null) {
+    if (authenticatedUser.name !== undefined) {
     } else {
       dispatch(getAuthenticatedUserAsync());
     }
@@ -135,7 +122,7 @@ export default function WithSubnavigation() {
               </Center>
               <br />
               <Center>
-                <p>{user.authenticatedUser.name}</p>
+                <p>{authenticatedUser.name}</p>
               </Center>
               <br />
               <MenuDivider />
