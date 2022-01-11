@@ -39,9 +39,15 @@ export default function SignUp() {
   };
 
   const registerUser = async (values: registerValues) => {
-    const response = await dispatch(
+    const response: any = await dispatch(
       registerUserAsync({ UserInformation: values })
     );
+
+    if (response.payload.Success) {
+      successNotify(response.payload.Message);
+    } else {
+      errorNotify(response.payload.Message);
+    }
   };
 
   return (

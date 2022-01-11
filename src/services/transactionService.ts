@@ -5,7 +5,11 @@ interface transactionValues {
   process_date: Date;
   amount: number;
   currency: string;
-  description: string;
+  description?: string;
+}
+
+interface transactionToDelete {
+  TransactionId: number;
 }
 
 export default class transactionService {
@@ -26,6 +30,39 @@ export default class transactionService {
   getTransactions() {
     return axios
       .get(`${process.env.REACT_APP_API_TRANSACTION_URI}`)
+      .then((response) => {
+        return response;
+      })
+      .catch((err) => {
+        return err.response;
+      });
+  }
+
+  deleteTransaction(transactionId: number) {
+    return axios
+      .delete(`${process.env.REACT_APP_API_TRANSACTION_URI}/${transactionId}`)
+      .then((response) => {
+        return response;
+      })
+      .catch((err) => {
+        return err.response;
+      });
+  }
+
+  getTransactionForUpdate(transactionId: number) {
+    return axios
+      .get(`${process.env.REACT_APP_API_TRANSACTION_URI}/${transactionId}`)
+      .then((response) => {
+        return response;
+      })
+      .catch((err) => {
+        return err.response;
+      });
+  }
+
+  updateTransaction(transactionId: number) {
+    return axios
+      .put(`${process.env.REACT_APP_API_TRANSACTION_URI}/${transactionId}`)
       .then((response) => {
         return response;
       })

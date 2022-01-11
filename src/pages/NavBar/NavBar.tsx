@@ -197,6 +197,15 @@ const DesktopNav = () => {
                 }}
               >
                 {navItem.label}
+                {navItem.children && (
+                  <Icon
+                    marginBottom={1}
+                    color={'blue.500'}
+                    w={5}
+                    h={5}
+                    as={ChevronDownIcon}
+                  />
+                )}
               </Link>
             </PopoverTrigger>
 
@@ -211,7 +220,7 @@ const DesktopNav = () => {
               >
                 <Stack>
                   {navItem.children.map((child) => (
-                    <DesktopSubNav key={child.label} {...child} />
+                    <DesktopSubNav key={(child.label, child.href)} {...child} />
                   ))}
                 </Stack>
               </PopoverContent>
@@ -226,8 +235,9 @@ const DesktopNav = () => {
 const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
   return (
     <Link
-      href={href}
       role={'group'}
+      as={RouterLink}
+      to={href}
       display={'block'}
       p={2}
       rounded={'md'}
@@ -281,8 +291,8 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
     <Stack spacing={4} onClick={children && onToggle}>
       <Flex
         py={2}
-        as={Link}
-        href={href ?? '#'}
+        as={RouterLink}
+        to={href ?? '#'}
         justify={'space-between'}
         align={'center'}
         _hover={{

@@ -19,28 +19,41 @@ import { successNotify, errorNotify } from '../Notify';
 import { ToastContainer, Zoom } from 'react-toastify';
 import { useEffect } from 'react';
 import { getCategoriesAsync } from 'redux/Slices/categorySlice';
-import {
-  addTransactionAsync,
-} from 'redux/Slices/transactionSlice';
+import { getTransactionForUpdate } from 'redux/Slices/transactionSlice';
+import { useParams } from 'react-router';
 
-export default function AddTransaction() {
+export default function UpdateTransaction() {
   const dispatch = useAppDispatch();
+  const { id } = useParams();
 
   const categories = useAppSelector((state) => state.categories);
+  const getTransaction = async () => {
+    const response: any = await dispatch(
+      getTransactionForUpdate({ TransactionId: id })
+    );
 
-  useEffect(() => {
-    if (categories.length > 0) {
-    } else {
-      dispatch(getCategoriesAsync());
+    if (response.payload.Success) {
+      transactionToUpdate = response.payload.TransactionToUpdate[0];
     }
-  }, [dispatch]);
+  };
+  let transactionToUpdate: any;
+  getTransaction();
+
+  getTransaction();
+
+  console.log(transactionToUpdate);
+
+  // useEffect(() => {
+  //   console.log('update useEffect');
+  //   getTransaction();
+  // }, [dispatch]);
 
   interface transactionInitialValues {
     category_id: number;
     process_date: Date;
     amount: number;
     currency: string;
-    description?: string;
+    description: string;
   }
 
   const initialValues = {
@@ -51,22 +64,22 @@ export default function AddTransaction() {
     description: '',
   };
 
-  const addTransaction = async (values: transactionInitialValues) => {
+  const updateTransaction = async (values: transactionInitialValues) => {
     console.log(values);
 
-    const response: any = await dispatch(
-      addTransactionAsync({ TransactionInformation: values })
-    );
+    // const response: any = await dispatch(
+    //   addTransactionAsync({ TransactionInformation: values })
+    // );
 
-    if (response.payload.Success) {
-      successNotify(response.payload.Message);
-    } else {
-      errorNotify(response.payload.Message);
-    }
+    // if (response.payload.Success) {
+    //   successNotify(response.payload.Message);
+    // } else {
+    //   errorNotify(response.payload.Message);
+    // }
   };
 
   return (
-    <Formik initialValues={initialValues} onSubmit={addTransaction}>
+    <Formik initialValues={initialValues} onSubmit={updateTransaction}>
       {(props) => (
         <Form>
           <Stack minH={'95vh'} direction={{ base: 'column', md: 'row' }}>
@@ -160,8 +173,8 @@ export default function AddTransaction() {
               </Stack>
             </Flex>
             {/* <Flex flex={2.2} display={{ base: "none", md: "none", lg: "none", xl: "flex" }}>
-                        <ListStocks></ListStocks>
-                    </Flex> */}
+                    <ListStocks></ListStocks>
+                </Flex> */}
           </Stack>
         </Form>
       )}

@@ -4,7 +4,7 @@ export interface NavItem {
   label: string;
   subLabel?: string;
   children?: Array<NavItem>;
-  href?: string;
+  href: string;
   rolesCanAccess?: Array<string>;
 }
 
@@ -37,7 +37,19 @@ export const NAV_ITEMS: Array<NavItem> = [
     href: routes.addCategory,
   },
   {
-    label: 'Gelir/Gider Ekle',
-    href: routes.addTransaction,
+    label: 'Gelir/Gider İşlemleri',
+    href: routes.listTransactions,
+    children: [
+      {
+        label: 'Gelir/Gider Listele',
+        subLabel: 'Kaydettiğiniz Gelir/Gider işlemlerinizi listeleyin.',
+        href: routes.listTransactions,
+      },
+      {
+        label: 'Gelir/Gider Ekle',
+        subLabel: 'Gelir/Gider işlemleriniz için kayıt oluşturun.',
+        href: routes.addTransaction,
+      },
+    ],
   },
 ];

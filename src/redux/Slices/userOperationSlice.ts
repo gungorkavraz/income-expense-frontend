@@ -88,9 +88,11 @@ const userOperationSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(registerUserAsync.fulfilled, (state, action) => {});
     builder.addCase(loginUserAsync.fulfilled, (state, action) => {
-      localStorage.setItem('accessToken', action.payload?.Token);
-      if (action.payload.Success)
+      if (action.payload.Success) {
+        localStorage.setItem('accessToken', action.payload?.Token);
         state.authenticatedUser = action.payload?.User;
+        window.location.reload();
+      }
     });
     builder.addCase(getAuthenticatedUserAsync.fulfilled, (state, action) => {
       if (action.payload.Success)

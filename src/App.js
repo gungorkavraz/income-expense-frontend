@@ -19,6 +19,8 @@ import SignUp from 'pages/UserOperations/SignUp';
 import NavBar from '../src/pages/NavBar/NavBar.tsx';
 import AddCategory from 'pages/CategoryOperations/AddCategory';
 import AddTransaction from 'pages/TransactionOperations/AddTransaction';
+import ListTransactions from 'pages/TransactionOperations/ListTransactions';
+import UpdateTransaction from 'pages/TransactionOperations/UpdateTransaction';
 
 function App() {
   const dispatch = useDispatch();
@@ -32,7 +34,8 @@ function App() {
   return (
     <Router>
       <Box className='App'>
-        {localStorage.getItem('accessToken') !== null ? (
+        {localStorage.getItem('accessToken') !== null ||
+        localStorage.getItem('accessToken') !== 'undefined' ? (
           <>
             <NavBar></NavBar>
             <Routes>
@@ -46,6 +49,21 @@ function App() {
                 path={routes.addTransaction}
                 element={<PrivateRoute component={AddTransaction} />}
               />
+              <Route
+                exact
+                path={routes.listTransactions}
+                element={<PrivateRoute component={ListTransactions} />}
+              />
+              <Route
+                path={`${routes.updateTransaction}/:id`}
+                element={<PrivateRoute component={UpdateTransaction} />}
+              />
+              <Route
+                exact
+                path={routes.signIn}
+                element={<PrivateRoute component={SignIn} />}
+              />
+              <Route exact path={routes.signUp} element={<SignUp />} />
               <Route path={'*'} element={<PageNotFound />}></Route>
             </Routes>
           </>
