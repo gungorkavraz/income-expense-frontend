@@ -16,6 +16,16 @@ interface TransactionInformation {
 interface transactionId {
   TransactionId: any;
 }
+interface columnName {
+  ColumnName: string;
+}
+
+interface filterValues {
+  FilterValues: {
+    column_name: string;
+    filter_value: string;
+  };
+}
 
 export const addTransactionAsync = createAsyncThunk(
   'categoritransactionses/addTransactionAsync',
@@ -103,6 +113,50 @@ export const getTransactionForUpdate = createAsyncThunk(
   }
 );
 
+export const sortTransactionsByColumn = createAsyncThunk(
+  'transactions/sortTransactionsByColumn',
+  async (payload: columnName) => {
+    const response = await transactionService.sortTransactionsByColumn(
+      payload.ColumnName
+    );
+
+    const data = response.data;
+
+    if (data.success) {
+      return {
+        Success: data.success,
+        Transactions: data.transactions,
+      };
+    } else {
+      return {
+        Success: data.success,
+      };
+    }
+  }
+);
+
+export const filterTransactionsByColumn = createAsyncThunk(
+  'transactions/filterTransactionsByColumn',
+  async (payload: filterValues) => {
+    const response = await transactionService.filterTransactionsByColumn(
+      payload.FilterValues
+    );
+
+    const data = response.data;
+
+    if (data.success) {
+      return {
+        Success: data.success,
+        Transactions: data.transactions,
+      };
+    } else {
+      return {
+        Success: data.success,
+      };
+    }
+  }
+);
+
 const transactionSlice = createSlice({
   name: 'transactions',
   initialState: Array,
@@ -121,13 +175,11 @@ const transactionSlice = createSlice({
           transaction.id !== action.payload.DeletedTransactionId
       );
     });
-    builder.addCase(getTransactionForUpdate.fulfilled, (state, action) => {
-      // console.log('action.payload.TransactionToUpdate.id');
-      // console.log(action.payload.TransactionToUpdate[0].id);
-      // return state.filter(
-      //   (transaction: any) =>
-      //     transaction.id === action.payload.TransactionToUpdate[0].id
-      // );
+    builder.addCase(sortTransactionsByColumn.fulfilled, (state, action) => {
+      return action.payload.Transactions;
+    });
+    builder.addCase(filterTransactionsByColumn.fulfilled, (state, action) => {
+      return action.payload.Transactions;
     });
   },
 });

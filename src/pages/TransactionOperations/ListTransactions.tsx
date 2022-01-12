@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { Link } from 'react-router-dom';
 import {
   HStack,
   Box,
@@ -9,38 +8,41 @@ import {
   Table,
   Thead,
   Tbody,
-  Image,
   Button,
   Tr,
   Th,
   Td,
   VStack,
   Flex,
-  RadioGroup,
-  Stack,
-  Radio,
+  useBoolean,
+  Select,
+  FormLabel,
 } from '@chakra-ui/react';
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ArrowLeftIcon,
-  ArrowRightIcon,
-} from '@chakra-ui/icons';
+import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 
 import { useAppDispatch, useAppSelector } from 'redux/hooks';
 import {
   deleteTransactionAsync,
+  filterTransactionsByColumn,
   getTransactionsAsync,
+  sortTransactionsByColumn,
 } from 'redux/Slices/transactionSlice';
 import { getCategoriesAsync } from 'redux/Slices/categorySlice';
 import { errorNotify, successNotify } from 'pages/Notify';
 import { ToastContainer, Zoom } from 'react-toastify';
-import UpdateTransaction from './UpdateTransaction';
 import routes from 'helper/routes';
 
 export default function ListTransactions() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const [showAmountOperations, setShowAmountOperations] = useBoolean(false);
+  const [showFilterOperations, setShowFilterOperations] = useBoolean(false);
+
+  const [changeDateIcon, setChangeDateIcon] = useBoolean(false);
+  const [changeAmountIcon, setChangeAmountIcon] = useBoolean(false);
+
+  const [columnToFilter, setColumnToFilter] = useState('');
 
   const transactions = useAppSelector((state) => state.transactions);
   const categories = useAppSelector((state) => state.categories);
@@ -78,33 +80,146 @@ export default function ListTransactions() {
     navigate(`${routes.updateTransaction}/${transactionId}`);
   };
 
+  const sortAmount = () => {
+    if (changeAmountIcon)
+      dispatch(sortTransactionsByColumn({ ColumnName: 'amount_inc' }));
+    else dispatch(sortTransactionsByColumn({ ColumnName: 'amount_desc' }));
+    setChangeAmountIcon.toggle();
+  };
+
+  const sortDate = () => {
+    if (changeDateIcon)
+      dispatch(sortTransactionsByColumn({ ColumnName: 'process_date_inc' }));
+    else
+      dispatch(sortTransactionsByColumn({ ColumnName: 'process_date_desc' }));
+    setChangeDateIcon.toggle();
+  };
+
+  const filterList = (value: string) => {
+    const filterValue = {
+      column_name: columnToFilter,
+      filter_value: value,
+    };
+    dispatch(filterTransactionsByColumn({ FilterValues: filterValue }));
+  };
+
   return (
     <Center>
-      <Box width='80%' alignItems='center'>
-        <HStack>
-          {/* <Input
-            type='text'
-            onChange={(input) => filterList(input)}
-            placeholder='Aramak istediğiniz ürün adını giriniz.'
-            mb={4}
-          ></Input> */}
-          {/* 
-              Button Click ile arama yapılmak istenirse yorum satırından çıkartılacak 
-              <Input type="text" onChange={(input) => setFilterText(input.target.value)}></Input> 
-              <Button type="submit" onClick={() => filterList()}>Ara</Button> 
-          */}
-        </HStack>
-        <HStack>
-          <Flex flex={2}>Filter Menu</Flex>
-
+      <Box width='100%' alignItems='center' justify='center' align='center'>
+        <VStack justify='center' align='center' w={'full'}>
+          <Flex flex={1} direction={'row'}>
+            {/* {showFilterOperations ? (
+                <Button
+                  onClick={() => setShowFilterOperations.toggle()}
+                  backgroundColor={'blue.300'}
+                  margin={2}
+                >
+                  Filtreleme İşlemlerini Aç
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => setShowFilterOperations.toggle()}
+                  backgroundColor={'red.300'}
+                  margin={2}
+                >
+                  Filtreleme İşlemlerini Kapat
+                </Button>
+              )}
+              {showAmountOperations ? (
+                <Button
+                  onClick={() => setShowAmountOperations.toggle()}
+                  backgroundColor={'blue.300'}
+                  margin={2}
+                >
+                  Net Tutar İşlemlerini Aç
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => setShowAmountOperations.toggle()}
+                  backgroundColor={'red.300'}
+                  margin={2}
+                >
+                  Net Tutar İşlemlerini Kapat
+                </Button>
+              )} */}
+            <VStack margin={2}>
+              <FormLabel color={'blue.300'}>Filtreleme Menüsü</FormLabel>
+              <HStack>
+                <FormLabel w={'150px'}>Kolon Adı : </FormLabel>
+                <Select
+                  w={'350px'}
+                  placeholder='Filtrelemek istediğiniz tablo kolonunu seçiniz.'
+                  name='filter_column'
+                  onChange={(e) => setColumnToFilter(e.target.value)}
+                  borderColor={'black'}
+                >
+                  <option value={'category_id'}>
+                    Gelir/Gider Kategorisine göre filtrele.
+                  </option>
+                  <option value={'amount'}>Tutar'a göre filtrele.</option>
+                  <option value={'currency'}>
+                    Para Birimine göre filtrele.
+                  </option>
+                  <option value={'process_date'}>
+                    İşlem Tarihine göre filtrele.
+                  </option>
+                  <option value={'description'}>
+                    Açıklamaya göre filtrele
+                  </option>
+                </Select>
+              </HStack>
+              <HStack>
+                <FormLabel w={'150px'}>Aranacak Kelime : </FormLabel>
+                <Input
+                  w={'350px'}
+                  type={'text'}
+                  onChange={(e) => filterList(e.target.value)}
+                  name='filter_text'
+                ></Input>
+              </HStack>
+            </VStack>
+            <VStack>
+              <FormLabel color={'blue.300'}>
+                Net tutarı görebilmek için tarih aralığı seçiniz.
+              </FormLabel>
+              <HStack>
+                <FormLabel w={'150px'}>Başlangıç Tarihini Seçiniz.</FormLabel>
+                <Input w={'350px'} type='date'></Input>
+              </HStack>
+              <HStack>
+                <FormLabel w={'150px'}>Bitiş Tarihini Seçiniz.</FormLabel>
+                <Input w={'350px'} type='date'></Input>
+              </HStack>
+            </VStack>
+          </Flex>
           <Flex flex={8} align={'center'} justify={'center'}>
             <Box overflowX={'scroll'}>
               <Table>
                 <Thead>
                   <Tr bg='lightgray'>
                     <Th>Gelir/Gider Kategorisi</Th>
-                    <Th>İşlem Tarihi</Th>
-                    <Th>Tutar</Th>
+                    <Th>
+                      <Button
+                        background={'transparent'}
+                        onClick={() => sortDate()}
+                        _focus={{ border: 'none' }}
+                        _hover={{ background: 'transparent' }}
+                      >
+                        İşlem Tarihi
+                        {changeDateIcon ? <ArrowDownIcon /> : <ArrowUpIcon />}
+                      </Button>
+                    </Th>
+                    <Th>
+                      <Button
+                        background={'transparent'}
+                        onClick={() => sortAmount()}
+                        _focus={{ border: 'none' }}
+                        _hover={{ background: 'transparent' }}
+                      >
+                        Tutar
+                        {changeAmountIcon ? <ArrowDownIcon /> : <ArrowUpIcon />}
+                      </Button>
+                    </Th>
                     <Th>Para Birimi</Th>
                     <Th>Açıklama</Th>
                     <Th>İşlemler</Th>
@@ -155,7 +270,7 @@ export default function ListTransactions() {
               </Table>
             </Box>
           </Flex>
-        </HStack>
+        </VStack>
         <ToastContainer
           position='bottom-right'
           transition={Zoom}
