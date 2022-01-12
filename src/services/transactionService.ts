@@ -13,6 +13,11 @@ interface filterInformation {
   filter_value: string;
 }
 
+interface dateInformation {
+  first_date: string;
+  last_date: string;
+}
+
 export default class transactionService {
   addTransaction(transactionInformation: transactionValues) {
     return axios
@@ -87,6 +92,19 @@ export default class transactionService {
     return axios
       .get(
         `${process.env.REACT_APP_API_TRANSACTION_URI}?${filterInformation.column_name}&filter_value=${filterInformation.filter_value}`
+      )
+      .then((response) => {
+        return response;
+      })
+      .catch((err) => {
+        return err.response;
+      });
+  }
+
+  calculateAmount(dateInformation: dateInformation) {
+    return axios
+      .get(
+        `${process.env.REACT_APP_API_TRANSACTION_URI}?first_date=${dateInformation.first_date}&last_date=${dateInformation.last_date}`
       )
       .then((response) => {
         return response;

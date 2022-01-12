@@ -22,8 +22,10 @@ import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 
 import { useAppDispatch, useAppSelector } from 'redux/hooks';
 import {
+  calculateAmountAsync,
   deleteTransactionAsync,
   filterTransactionsByColumn,
+  getTransactionForUpdate,
   getTransactionsAsync,
   sortTransactionsByColumn,
 } from 'redux/Slices/transactionSlice';
@@ -36,8 +38,8 @@ export default function ListTransactions() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const [showAmountOperations, setShowAmountOperations] = useBoolean(false);
-  const [showFilterOperations, setShowFilterOperations] = useBoolean(false);
+  const [firstDate, setFirstDate] = useState('false');
+  const [lastDate, setLastDate] = useState('false');
 
   const [changeDateIcon, setChangeDateIcon] = useBoolean(false);
   const [changeAmountIcon, setChangeAmountIcon] = useBoolean(false);
@@ -77,6 +79,7 @@ export default function ListTransactions() {
   };
 
   const updateTransaction = (transactionId: number) => {
+    dispatch(getTransactionForUpdate({ TransactionId: transactionId }));
     navigate(`${routes.updateTransaction}/${transactionId}`);
   };
 
@@ -103,45 +106,21 @@ export default function ListTransactions() {
     dispatch(filterTransactionsByColumn({ FilterValues: filterValue }));
   };
 
+  const calculateAmount = () => {
+    console.log(firstDate);
+    console.log(lastDate);
+    const dates = {
+      first_date: firstDate,
+      last_date: lastDate,
+    };
+    dispatch(calculateAmountAsync({ Dates: dates }));
+  };
+
   return (
     <Center>
       <Box width='100%' alignItems='center' justify='center' align='center'>
         <VStack justify='center' align='center' w={'full'}>
           <Flex flex={1} direction={'row'}>
-            {/* {showFilterOperations ? (
-                <Button
-                  onClick={() => setShowFilterOperations.toggle()}
-                  backgroundColor={'blue.300'}
-                  margin={2}
-                >
-                  Filtreleme İşlemlerini Aç
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => setShowFilterOperations.toggle()}
-                  backgroundColor={'red.300'}
-                  margin={2}
-                >
-                  Filtreleme İşlemlerini Kapat
-                </Button>
-              )}
-              {showAmountOperations ? (
-                <Button
-                  onClick={() => setShowAmountOperations.toggle()}
-                  backgroundColor={'blue.300'}
-                  margin={2}
-                >
-                  Net Tutar İşlemlerini Aç
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => setShowAmountOperations.toggle()}
-                  backgroundColor={'red.300'}
-                  margin={2}
-                >
-                  Net Tutar İşlemlerini Kapat
-                </Button>
-              )} */}
             <VStack margin={2}>
               <FormLabel color={'blue.300'}>Filtreleme Menüsü</FormLabel>
               <HStack>
@@ -184,16 +163,33 @@ export default function ListTransactions() {
               </FormLabel>
               <HStack>
                 <FormLabel w={'150px'}>Başlangıç Tarihini Seçiniz.</FormLabel>
-                <Input w={'350px'} type='date'></Input>
+                <Input
+                  onChange={(e) => setFirstDate(e.target.value)}
+                  w={'350px'}
+                  type='date'
+                ></Input>
               </HStack>
               <HStack>
                 <FormLabel w={'150px'}>Bitiş Tarihini Seçiniz.</FormLabel>
-                <Input w={'350px'} type='date'></Input>
+                <Input
+                  onChange={(e) => setLastDate(e.target.value)}
+                  w={'350px'}
+                  type='date'
+                ></Input>
               </HStack>
+              <Button
+                backgroundColor={'green.300'}
+                onClick={() => calculateAmount()}
+              >
+                Hesapla
+              </Button>
             </VStack>
           </Flex>
           <Flex flex={8} align={'center'} justify={'center'}>
             <Box overflowX={'scroll'}>
+              <HStack justify={'center'} align={'center'}>
+                <FormLabel>Net Tutar : {}</FormLabel>
+              </HStack>
               <Table>
                 <Thead>
                   <Tr bg='lightgray'>

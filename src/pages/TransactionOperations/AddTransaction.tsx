@@ -1,5 +1,4 @@
 import { Formik, Form } from 'formik';
-import axios from 'axios';
 import {
   Flex,
   Stack,
@@ -19,9 +18,7 @@ import { successNotify, errorNotify } from '../Notify';
 import { ToastContainer, Zoom } from 'react-toastify';
 import { useEffect } from 'react';
 import { getCategoriesAsync } from 'redux/Slices/categorySlice';
-import {
-  addTransactionAsync,
-} from 'redux/Slices/transactionSlice';
+import { addTransactionAsync } from 'redux/Slices/transactionSlice';
 
 export default function AddTransaction() {
   const dispatch = useAppDispatch();

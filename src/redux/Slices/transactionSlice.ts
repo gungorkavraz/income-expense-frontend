@@ -27,6 +27,13 @@ interface filterValues {
   };
 }
 
+interface dateValues {
+  Dates: {
+    first_date: string;
+    last_date: string;
+  };
+}
+
 export const addTransactionAsync = createAsyncThunk(
   'categoritransactionses/addTransactionAsync',
   async (payload: TransactionInformation) => {
@@ -157,6 +164,26 @@ export const filterTransactionsByColumn = createAsyncThunk(
   }
 );
 
+export const calculateAmountAsync = createAsyncThunk(
+  'transactions/calculateAmountAsync',
+  async (payload: dateValues) => {
+    const response = await transactionService.calculateAmount(payload.Dates);
+
+    const data = response.data;
+
+    if (data.success) {
+      return {
+        Success: data.success,
+        Transactions: data.transactions,
+      };
+    } else {
+      return {
+        Success: data.success,
+      };
+    }
+  }
+);
+
 const transactionSlice = createSlice({
   name: 'transactions',
   initialState: Array,
@@ -175,10 +202,16 @@ const transactionSlice = createSlice({
           transaction.id !== action.payload.DeletedTransactionId
       );
     });
+    builder.addCase(getTransactionForUpdate.fulfilled, (state, action) => {
+      state.push(action.payload.TransactionToUpdate[0]);
+    });
     builder.addCase(sortTransactionsByColumn.fulfilled, (state, action) => {
       return action.payload.Transactions;
     });
     builder.addCase(filterTransactionsByColumn.fulfilled, (state, action) => {
+      return action.payload.Transactions;
+    });
+    builder.addCase(calculateAmountAsync.fulfilled, (state, action) => {
       return action.payload.Transactions;
     });
   },

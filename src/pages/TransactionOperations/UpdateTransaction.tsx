@@ -19,7 +19,10 @@ import { successNotify, errorNotify } from '../Notify';
 import { ToastContainer, Zoom } from 'react-toastify';
 import { useEffect } from 'react';
 import { getCategoriesAsync } from 'redux/Slices/categorySlice';
-import { getTransactionForUpdate } from 'redux/Slices/transactionSlice';
+import {
+  getTransactionForUpdate,
+  getTransactionsAsync,
+} from 'redux/Slices/transactionSlice';
 import { useParams } from 'react-router';
 
 export default function UpdateTransaction() {
@@ -27,26 +30,22 @@ export default function UpdateTransaction() {
   const { id } = useParams();
 
   const categories = useAppSelector((state) => state.categories);
-  const getTransaction = async () => {
-    const response: any = await dispatch(
-      getTransactionForUpdate({ TransactionId: id })
-    );
+  const transactions: any = useAppSelector((state) => state.transactions);
 
-    if (response.payload.Success) {
-      transactionToUpdate = response.payload.TransactionToUpdate[0];
+  useEffect(() => {
+    if (categories.length > 0) {
+    } else {
+      dispatch(getCategoriesAsync());
     }
-  };
-  let transactionToUpdate: any;
-  getTransaction();
+    if (transactions.length > 0) {
+    } else {
+      dispatch(getTransactionForUpdate({ TransactionId: id }));
+    }
+    // dispatch(getTransactionForUpdate({ TransactionId: id }));
+  }, [dispatch]);
 
-  getTransaction();
-
-  console.log(transactionToUpdate);
-
-  // useEffect(() => {
-  //   console.log('update useEffect');
-  //   getTransaction();
-  // }, [dispatch]);
+  console.log('transactions');
+  console.log(transactions);
 
   interface transactionInitialValues {
     category_id: number;
@@ -86,7 +85,7 @@ export default function UpdateTransaction() {
             <Flex p={8} flex={1} align={'center'} justify={'center'}>
               <Stack spacing={4} w={{ base: 'xs', md: 'full' }} maxW={'lg'}>
                 <Heading fontSize={'2xl'} pb={8} align={'center'}>
-                  Gelir/Gider Kayıt
+                  Gelir/Gider Güncelle
                 </Heading>
                 <Stack direction={{ base: 'column', md: 'column' }}>
                   <HStack w={'full'}>
@@ -115,6 +114,7 @@ export default function UpdateTransaction() {
                         onChange={props.handleChange}
                         name='process_date'
                         type='date'
+                        value={transactions?.process_date}
                       />
                     </FormControl>
                   </HStack>
@@ -126,6 +126,7 @@ export default function UpdateTransaction() {
                         onChange={props.handleChange}
                         name='amount'
                         type='number'
+                        value={transactions?.amount}
                       />
                     </FormControl>
                     <FormControl id='currency'>
@@ -135,6 +136,7 @@ export default function UpdateTransaction() {
                         onChange={props.handleChange}
                         name='currency'
                         placeholder='Gelir/Gider Para Birimi Seçiniz'
+                        value={transactions?.currency}
                       >
                         <option value={'TRY'}>TRY</option>
                         <option value={'EUR'}>EUR</option>
@@ -150,6 +152,7 @@ export default function UpdateTransaction() {
                         onChange={props.handleChange}
                         name='description'
                         type='text'
+                        value={transactions?.description}
                       />
                     </FormControl>
                   </HStack>
@@ -161,7 +164,7 @@ export default function UpdateTransaction() {
                     variant={'solid'}
                     mt={4}
                   >
-                    Gelir/Gider Kaydet
+                    Gelir/Gider Güncelle
                   </Button>
                   <ToastContainer
                     position='bottom-right'
