@@ -48,7 +48,11 @@ export default function UpdateTransaction() {
       setCategoryId(selectedCategory[0].id);
       setAmount(transactions[0].amount);
       setCurrency(transactions[0].currency);
-      setDescription(transactions[0].description);
+      if (transactions[0].description !== null)
+        setDescription(transactions[0].description);
+      else {
+        setDescription('');
+      }
       setProcessDate(transactions[0].process_date);
     }
     dispatch(getCategoriesAsync());
