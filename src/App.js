@@ -21,6 +21,7 @@ import AddCategory from 'pages/CategoryOperations/AddCategory';
 import AddTransaction from 'pages/TransactionOperations/AddTransaction';
 import ListTransactions from 'pages/TransactionOperations/ListTransactions';
 import UpdateTransaction from 'pages/TransactionOperations/UpdateTransaction';
+import HomePage from 'pages/HomePage';
 
 function App() {
   const dispatch = useDispatch();
@@ -39,6 +40,11 @@ function App() {
           <>
             <NavBar></NavBar>
             <Routes>
+              <Route
+                exact
+                path={routes.home}
+                element={<PrivateRoute component={HomePage} />}
+              />
               <Route
                 exact
                 path={routes.addCategory}

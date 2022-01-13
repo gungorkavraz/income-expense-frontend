@@ -30,7 +30,7 @@ import {
   sortTransactionsByColumn,
 } from 'redux/Slices/transactionSlice';
 import { getCategoriesAsync } from 'redux/Slices/categorySlice';
-import { errorNotify, successNotify } from 'pages/Notify';
+import { errorNotify, successNotify, warningNotify } from 'pages/Notify';
 import { ToastContainer, Zoom } from 'react-toastify';
 import routes from 'helper/routes';
 
@@ -69,7 +69,7 @@ export default function ListTransactions() {
         errorNotify(response.payload.Message);
       }
     } else {
-      console.log('Ürün silinmedi.');
+      warningNotify('Ürün Silinmedi.');
     }
   };
 
@@ -102,8 +102,6 @@ export default function ListTransactions() {
   };
 
   const calculateAmount = async () => {
-    console.log(firstDate);
-    console.log(lastDate);
     const dates = {
       first_date: firstDate,
       last_date: lastDate,
@@ -111,11 +109,6 @@ export default function ListTransactions() {
     const response: any = await dispatch(
       calculateAmountAsync({ Dates: dates })
     );
-    console.log('response');
-    console.log('response');
-    console.log('response');
-    console.log(response);
-    console.log('response');
     setNetAmount(response.payload.netAmount);
   };
 
@@ -154,7 +147,7 @@ export default function ListTransactions() {
                 <FormLabel w={'150px'}>Aranacak Kelime : </FormLabel>
                 <Input
                   w={'350px'}
-                  type={'text'}
+                  type={columnToFilter === 'amount' ? 'number' : 'text'}
                   onChange={(e) => filterList(e.target.value)}
                   name='filter_text'
                 ></Input>
@@ -226,38 +219,38 @@ export default function ListTransactions() {
                 </Thead>
                 <Tbody>
                   {transactions.map((transaction: any) => (
-                    <Tr key={transaction.id}>
+                    <Tr key={transaction?.id}>
                       <Td>
                         {categories.map(
                           (category: any) =>
-                            category.id ===
+                            category?.id ===
                               parseInt(transaction?.category_id) &&
-                            category.name
+                            category?.name
                         )}
                       </Td>
                       <Td minW={'150px'} maxW={'300px'}>
-                        {transaction.process_date}
+                        {transaction?.process_date}
                       </Td>
                       <Td minW={'150px'} maxW={'300px'}>
-                        {transaction.amount}
+                        {transaction?.amount}
                       </Td>
                       <Td minW={'150px'} maxW={'300px'}>
-                        {transaction.currency}
+                        {transaction?.currency}
                       </Td>
                       <Td minW={'150px'} maxW={'300px'}>
-                        {transaction.description}
+                        {transaction?.description}
                       </Td>
                       <Td minW={'150px'} maxW={'300px'}>
                         <VStack align={'left'}>
                           <Button
                             backgroundColor={'red.300'}
-                            onClick={() => deleteTransaction(transaction.id)}
+                            onClick={() => deleteTransaction(transaction?.id)}
                           >
                             Sil
                           </Button>
                           <Button
                             backgroundColor={'blue.300'}
-                            onClick={() => updateTransaction(transaction.id)}
+                            onClick={() => updateTransaction(transaction?.id)}
                           >
                             Güncelle
                           </Button>

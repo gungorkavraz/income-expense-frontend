@@ -14,6 +14,7 @@ export const PrivateRoute: React.FC<Props> = ({
   component: RouteComponent,
   Roles,
 }) => {
+  const navigate = useNavigate();
   const isAuthenticated = localStorage.getItem('accessToken');
 
   const userUnauthorized = isAuthenticated === null;
@@ -25,5 +26,5 @@ export const PrivateRoute: React.FC<Props> = ({
     return <RouteComponent />;
   }
 
-  return <SignIn />;
+  return <PageNotFound />;
 };

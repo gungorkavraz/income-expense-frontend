@@ -49,8 +49,6 @@ export default function AddTransaction() {
   };
 
   const addTransaction = async (values: transactionInitialValues) => {
-    console.log(values);
-
     const response: any = await dispatch(
       addTransactionAsync({ TransactionInformation: values })
     );

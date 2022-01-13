@@ -53,7 +53,12 @@ export default function UpdateTransaction() {
     }
     dispatch(getCategoriesAsync());
 
-    dispatch(getTransactionForUpdate({ TransactionId: id }));
+    dispatch(getTransactionForUpdate({ TransactionId: id })).then(
+      (response: any) =>
+        response.payload.TransactionToUpdate.length > 0
+          ? ''
+          : errorNotify(response.payload.Message + ': ' + id)
+    );
   }, [dispatch, transactions.length]);
 
   const initialValues = {
@@ -74,8 +79,6 @@ export default function UpdateTransaction() {
       currency: currency,
       description: description,
     };
-
-    console.log(updatedInformation);
 
     const response: any = await dispatch(
       updateTransactionAsync({ TransactionInformation: updatedInformation })

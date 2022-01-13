@@ -17,6 +17,8 @@ import { Formik, Form } from 'formik';
 
 import routes from '../../helper/routes';
 
+
+
 import { successNotify, errorNotify } from '../Notify';
 import { ToastContainer, Zoom } from 'react-toastify';
 import { loginUserAsync } from 'redux/Slices/userOperationSlice';
@@ -36,11 +38,18 @@ export default function SignIn() {
   };
 
   const onUserLogin = async (values: loginInitialValues) => {
-    const response = await dispatch(
+    const response: any = await dispatch(
       loginUserAsync({ UserInformation: values })
     );
 
-    navigate('/');
+    console.log(response);
+    if (response.payload.Success) {
+      navigate(routes.home);
+      window.location.reload();
+      successNotify(response.payload.Message);
+    } else {
+      errorNotify('Email veya şifre hatalı.');
+    }
   };
   return (
     <Formik initialValues={initialValues} onSubmit={onUserLogin}>
@@ -75,7 +84,6 @@ export default function SignIn() {
                     align={'start'}
                     justify={'space-between'}
                   >
-                    <Checkbox borderColor='gray'>Beni Hatırla</Checkbox>
                     <Link as={RouterLink} to={routes.signUp} color={'blue.500'}>
                       Hesabım Yok
                     </Link>

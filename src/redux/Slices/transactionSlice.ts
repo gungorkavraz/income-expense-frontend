@@ -95,8 +95,6 @@ export const updateTransactionAsync = createAsyncThunk(
     );
 
     const data = response.data;
-    console.log('data');
-    console.log(data);
     if (data.success) {
       return {
         Success: data.success,
@@ -143,7 +141,7 @@ export const getTransactionForUpdate = createAsyncThunk(
       return {
         Success: 200,
         TransactionToUpdate: data.transactionToUpdate,
-        Message: '',
+        Message: data.message,
       };
     } else {
       return {
@@ -225,7 +223,6 @@ const transactionSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(addTransactionAsync.fulfilled, (state, action) => {
-      console.log('addT');
       state.push(action.payload.Transaction);
     });
     builder.addCase(getTransactionsAsync.fulfilled, (state, action) => {
@@ -247,7 +244,6 @@ const transactionSlice = createSlice({
       return action.payload.Transactions;
     });
     builder.addCase(calculateAmountAsync.fulfilled, (state, action) => {
-      console.log(action.payload.netAmount);
       return action.payload.Transactions;
     });
   },

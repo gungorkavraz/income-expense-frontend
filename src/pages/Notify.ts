@@ -8,3 +8,7 @@ export const successNotify = (message: string) => {
 export const errorNotify = (message: string) => {
   toast.error(message);
 };
+
+export const warningNotify = (message: string) => {
+  toast.warning(message);
+};

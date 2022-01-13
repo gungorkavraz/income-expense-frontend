@@ -36,9 +36,12 @@ import { NAV_ITEMS, NavItem } from './NavBarDeclarations';
 import routes from 'helper/routes';
 
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router';
+
 import { getAuthenticatedUserAsync } from 'redux/Slices/userOperationSlice';
 
 export default function WithSubnavigation() {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { isOpen, onToggle } = useDisclosure();
 
@@ -55,6 +58,7 @@ export default function WithSubnavigation() {
 
   const logout = () => {
     localStorage.removeItem('accessToken');
+    navigate(routes.signIn);
     window.location.reload();
   };
 
@@ -122,12 +126,10 @@ export default function WithSubnavigation() {
               </Center>
               <br />
               <Center>
-                <p>{authenticatedUser.name}</p>
+                <p>{authenticatedUser?.name}</p>
               </Center>
               <br />
               <MenuDivider />
-              <MenuItem>Your Servers</MenuItem>
-              <MenuItem>Account Settings</MenuItem>
               <MenuItem onClick={() => logout()}>Çıkış Yap</MenuItem>
             </MenuList>
           </Menu>
