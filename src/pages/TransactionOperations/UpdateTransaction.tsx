@@ -17,11 +17,12 @@ import {
 import { useAppDispatch, useAppSelector } from 'redux/hooks';
 import { successNotify, errorNotify } from '../Notify';
 import { ToastContainer, Zoom } from 'react-toastify';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getCategoriesAsync } from 'redux/Slices/categorySlice';
 import {
   getTransactionForUpdate,
   getTransactionsAsync,
+  updateTransactionAsync,
 } from 'redux/Slices/transactionSlice';
 import { useParams } from 'react-router';
 
@@ -32,30 +33,31 @@ export default function UpdateTransaction() {
   const categories = useAppSelector((state) => state.categories);
   const transactions: any = useAppSelector((state) => state.transactions);
 
+  const [categoryId, setCategoryId] = useState('');
+  const [amount, setAmount] = useState(0);
+  const [currency, setCurrency] = useState('');
+  const [description, setDescription] = useState('');
+  const [processDate, setProcessDate] = useState('');
+
   useEffect(() => {
-    if (categories.length > 0) {
-    } else {
-      dispatch(getCategoriesAsync());
-    }
     if (transactions.length > 0) {
-    } else {
-      dispatch(getTransactionForUpdate({ TransactionId: id }));
+      const selectedCategory: any = categories.filter(
+        (category: any) => category.id === transactions[0].category_id
+      );
+
+      setCategoryId(selectedCategory[0].id);
+      setAmount(transactions[0].amount);
+      setCurrency(transactions[0].currency);
+      setDescription(transactions[0].description);
+      setProcessDate(transactions[0].process_date);
     }
-    // dispatch(getTransactionForUpdate({ TransactionId: id }));
-  }, [dispatch]);
+    dispatch(getCategoriesAsync());
 
-  console.log('transactions');
-  console.log(transactions);
-
-  interface transactionInitialValues {
-    category_id: number;
-    process_date: Date;
-    amount: number;
-    currency: string;
-    description: string;
-  }
+    dispatch(getTransactionForUpdate({ TransactionId: id }));
+  }, [dispatch, transactions.length]);
 
   const initialValues = {
+    id: '',
     category_id: 0,
     process_date: new Date(),
     amount: 0,
@@ -63,18 +65,27 @@ export default function UpdateTransaction() {
     description: '',
   };
 
-  const updateTransaction = async (values: transactionInitialValues) => {
-    console.log(values);
+  const updateTransaction = async () => {
+    const updatedInformation = {
+      id: id!,
+      category_id: parseInt(categoryId),
+      process_date: processDate,
+      amount: amount,
+      currency: currency,
+      description: description,
+    };
 
-    // const response: any = await dispatch(
-    //   addTransactionAsync({ TransactionInformation: values })
-    // );
+    console.log(updatedInformation);
 
-    // if (response.payload.Success) {
-    //   successNotify(response.payload.Message);
-    // } else {
-    //   errorNotify(response.payload.Message);
-    // }
+    const response: any = await dispatch(
+      updateTransactionAsync({ TransactionInformation: updatedInformation })
+    );
+
+    if (response.payload.Success) {
+      successNotify(response.payload.Message);
+    } else {
+      errorNotify(response.payload.Message);
+    }
   };
 
   return (
@@ -93,9 +104,10 @@ export default function UpdateTransaction() {
                       <FormLabel>Gelir/Gider Kategorisi Seçiniz</FormLabel>
                       <Select
                         required
-                        onChange={props.handleChange}
+                        onChange={(e) => setCategoryId(e.target.value)}
                         name='category_id'
                         type='text'
+                        value={categoryId}
                         placeholder='Gelir/Gider Kategorisi Seçiniz'
                       >
                         {categories.map((category: any) => (
@@ -111,10 +123,10 @@ export default function UpdateTransaction() {
                       <FormLabel>İşlem Tarihi</FormLabel>
                       <Input
                         required
-                        onChange={props.handleChange}
+                        onChange={(e) => setProcessDate(e.target.value)}
                         name='process_date'
                         type='date'
-                        value={transactions?.process_date}
+                        value={processDate}
                       />
                     </FormControl>
                   </HStack>
@@ -123,20 +135,20 @@ export default function UpdateTransaction() {
                       <FormLabel>Miktar</FormLabel>
                       <Input
                         required
-                        onChange={props.handleChange}
+                        onChange={(e) => setAmount(parseInt(e.target.value))}
                         name='amount'
                         type='number'
-                        value={transactions?.amount}
+                        value={amount}
                       />
                     </FormControl>
                     <FormControl id='currency'>
                       <FormLabel>Para Birimi</FormLabel>
                       <Select
                         required
-                        onChange={props.handleChange}
+                        onChange={(e) => setCurrency(e.target.value)}
                         name='currency'
                         placeholder='Gelir/Gider Para Birimi Seçiniz'
-                        value={transactions?.currency}
+                        value={currency}
                       >
                         <option value={'TRY'}>TRY</option>
                         <option value={'EUR'}>EUR</option>
@@ -149,10 +161,10 @@ export default function UpdateTransaction() {
                     <FormControl id='description'>
                       <FormLabel>Açıklama</FormLabel>
                       <Input
-                        onChange={props.handleChange}
+                        onChange={(e) => setDescription(e.target.value)}
                         name='description'
                         type='text'
-                        value={transactions?.description}
+                        value={description}
                       />
                     </FormControl>
                   </HStack>

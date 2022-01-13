@@ -13,6 +13,17 @@ interface TransactionInformation {
   };
 }
 
+interface TransactionToUpdateInformation {
+  TransactionInformation: {
+    id: string;
+    category_id: number;
+    process_date: string;
+    amount: number;
+    currency: string;
+    description?: string;
+  };
+}
+
 interface transactionId {
   TransactionId: any;
 }
@@ -67,6 +78,29 @@ export const getTransactionsAsync = createAsyncThunk(
       return {
         Success: data.success,
         Transactions: data.transactions,
+      };
+    } else {
+      return {
+        Success: data.success,
+      };
+    }
+  }
+);
+
+export const updateTransactionAsync = createAsyncThunk(
+  'transactions/updateTransactionAsync',
+  async (payload: TransactionToUpdateInformation) => {
+    const response = await transactionService.updateTransaction(
+      payload.TransactionInformation
+    );
+
+    const data = response.data;
+    console.log('data');
+    console.log(data);
+    if (data.success) {
+      return {
+        Success: data.success,
+        Message: data.message,
       };
     } else {
       return {
@@ -203,7 +237,7 @@ const transactionSlice = createSlice({
       );
     });
     builder.addCase(getTransactionForUpdate.fulfilled, (state, action) => {
-      state.push(action.payload.TransactionToUpdate[0]);
+      return action.payload.TransactionToUpdate;
     });
     builder.addCase(sortTransactionsByColumn.fulfilled, (state, action) => {
       return action.payload.Transactions;

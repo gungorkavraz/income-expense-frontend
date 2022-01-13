@@ -50,16 +50,9 @@ export default function ListTransactions() {
   const categories = useAppSelector((state) => state.categories);
 
   useEffect(() => {
-    if (transactions.length > 0) {
-    } else {
-      dispatch(getTransactionsAsync());
-    }
-
-    if (categories.length > 0) {
-    } else {
-      dispatch(getCategoriesAsync());
-    }
-  }, [dispatch, categories, transactions]);
+    dispatch(getTransactionsAsync());
+    dispatch(getCategoriesAsync());
+  }, [dispatch]);
 
   const deleteTransaction = async (transactionId: number) => {
     var answer = window.confirm('Ürünü silmek istediğinizden emin misiniz ? ');
@@ -181,7 +174,7 @@ export default function ListTransactions() {
                 backgroundColor={'green.300'}
                 onClick={() => calculateAmount()}
               >
-                Hesapla
+                Net Tutar Hesapla
               </Button>
             </VStack>
           </Flex>

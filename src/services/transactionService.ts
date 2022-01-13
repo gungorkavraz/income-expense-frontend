@@ -7,6 +7,14 @@ interface transactionValues {
   currency: string;
   description?: string;
 }
+interface transactionToUpdateValues {
+  id: string;
+  category_id: number;
+  process_date: string;
+  amount: number;
+  currency: string;
+  description?: string;
+}
 
 interface filterInformation {
   column_name: string;
@@ -66,9 +74,12 @@ export default class transactionService {
       });
   }
 
-  updateTransaction(transactionId: number) {
+  updateTransaction(transactionInformation: transactionToUpdateValues) {
     return axios
-      .put(`${process.env.REACT_APP_API_TRANSACTION_URI}/${transactionId}`)
+      .put(
+        `${process.env.REACT_APP_API_TRANSACTION_URI}/${transactionInformation.id}`,
+        transactionInformation
+      )
       .then((response) => {
         return response;
       })
