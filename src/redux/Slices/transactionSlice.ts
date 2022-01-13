@@ -209,6 +209,7 @@ export const calculateAmountAsync = createAsyncThunk(
       return {
         Success: data.success,
         Transactions: data.transactions,
+        netAmount: data.net_amount,
       };
     } else {
       return {
@@ -246,6 +247,7 @@ const transactionSlice = createSlice({
       return action.payload.Transactions;
     });
     builder.addCase(calculateAmountAsync.fulfilled, (state, action) => {
+      console.log(action.payload.netAmount);
       return action.payload.Transactions;
     });
   },

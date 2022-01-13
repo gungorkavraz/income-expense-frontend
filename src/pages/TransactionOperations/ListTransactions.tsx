@@ -38,6 +38,8 @@ export default function ListTransactions() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const [netAmount, setNetAmount] = useState(0);
+
   const [firstDate, setFirstDate] = useState('false');
   const [lastDate, setLastDate] = useState('false');
 
@@ -99,14 +101,22 @@ export default function ListTransactions() {
     dispatch(filterTransactionsByColumn({ FilterValues: filterValue }));
   };
 
-  const calculateAmount = () => {
+  const calculateAmount = async () => {
     console.log(firstDate);
     console.log(lastDate);
     const dates = {
       first_date: firstDate,
       last_date: lastDate,
     };
-    dispatch(calculateAmountAsync({ Dates: dates }));
+    const response: any = await dispatch(
+      calculateAmountAsync({ Dates: dates })
+    );
+    console.log('response');
+    console.log('response');
+    console.log('response');
+    console.log(response);
+    console.log('response');
+    setNetAmount(response.payload.netAmount);
   };
 
   return (
@@ -181,7 +191,7 @@ export default function ListTransactions() {
           <Flex flex={8} align={'center'} justify={'center'}>
             <Box overflowX={'scroll'}>
               <HStack justify={'center'} align={'center'}>
-                <FormLabel>Net Tutar : {}</FormLabel>
+                <FormLabel>Net Tutar : {Math.floor(netAmount)}</FormLabel>
               </HStack>
               <Table>
                 <Thead>
